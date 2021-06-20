@@ -19,8 +19,15 @@ func init() {
 	db.AutoMigrate(&Account{})
 }
 
+func (account *Account) CreateAccount() *Account {
+	db.NewRecord(account)
+	db.Create(&account)
+	return account
+}
+
 type ResponseAccount struct {
 	ID      uint
 	Name    string
 	Balance int
 }
+
