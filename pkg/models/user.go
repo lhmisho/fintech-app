@@ -14,6 +14,13 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type ResponseUser struct {
+	ID       uint
+	Username string
+	Email    string
+	Accounts []ResponseAccount
+}
+
 func init() {
 	config.Connect()
 	db = config.GetDB()

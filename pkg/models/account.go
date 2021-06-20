@@ -18,3 +18,9 @@ func init() {
 	db = config.GetDB()
 	db.AutoMigrate(&Account{})
 }
+
+type ResponseAccount struct {
+	ID      uint
+	Name    string
+	Balance int
+}
