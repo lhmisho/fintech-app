@@ -30,8 +30,8 @@ func LoginService(username string, pass string) map[string]interface{} {
 		user := &models.User{}
 		if db.Where("username=?", username).First(&user).RecordNotFound() {
 			return map[string]interface{}{
-				"status":  http.StatusBadRequest,
-				"message": "Record Not found",
+				"Status":  http.StatusBadRequest,
+				"Message": "Record Not found",
 			}
 		}
 
@@ -39,8 +39,8 @@ func LoginService(username string, pass string) map[string]interface{} {
 		passErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pass))
 		if passErr == bcrypt.ErrMismatchedHashAndPassword && passErr != nil {
 			return map[string]interface{}{
-				"status":  http.StatusBadRequest,
-				"message": "User or Password mismatched!",
+				"Status":  http.StatusBadRequest,
+				"Message": "User or Password mismatched!",
 			}
 		}
 
@@ -52,8 +52,8 @@ func LoginService(username string, pass string) map[string]interface{} {
 		return response
 	}else{
 		return map[string]interface{}{
-			"status": http.StatusBadRequest,
-			"message": "Please provide valid value",
+			"Status": http.StatusBadRequest,
+			"Message": "Please provide valid value",
 		}
 	}
 }

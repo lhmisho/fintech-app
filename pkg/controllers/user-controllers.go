@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fintech-app/pkg/models"
 	"fintech-app/pkg/service"
 	"fintech-app/pkg/utils"
@@ -15,7 +14,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	utils.ParseBody(r, CreateUser)
 	// validate request
 	valid := service.RegisterService(CreateUser.Username, CreateUser.Email, CreateUser.Password)
-	if valid["status"] == 200{
+	if valid["Status"] == 200{
 		CreateUser.Password = utils.HashAndSalt([]byte(CreateUser.Password))
 		user := CreateUser.CreateUser()
 
@@ -31,14 +30,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		accounts = append(accounts, respAccount)
 
 		var response = service.PrepareResponse(user, accounts)
-		res, _ := json.Marshal(response)
-		w.Header().Set("Content-Type", "pkglication/json")
-		w.WriteHeader(http.StatusCreated)
-		w.Write(res)
+		service.PrepareCreateResponse(response, w)
 
 	}else {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(&valid)
+		service.PrepareErrResponse(valid, w)
 	}
 
 }

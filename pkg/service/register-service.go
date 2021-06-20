@@ -15,13 +15,13 @@ func RegisterService(username string, email string, pass string) map[string]inte
 		})
 	if valid{
 		return map[string]interface{}{
-			"status": http.StatusOK,
-			"message": "All is ok",
+			"Status": http.StatusOK,
+			"Message": "All is ok",
 		}
 	}else {
 		return map[string]interface{}{
-			"status": http.StatusBadRequest,
-			"message": "Please provide valid value",
+			"Status": http.StatusBadRequest,
+			"Message": "Please provide valid value",
 		}
 	}
 }
