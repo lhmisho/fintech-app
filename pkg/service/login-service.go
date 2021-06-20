@@ -3,12 +3,9 @@ package service
 import (
 	"fintech-app/pkg/config"
 	"fintech-app/pkg/models"
-	"fintech-app/pkg/utils"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"time"
 )
 
 var db *gorm.DB
@@ -16,6 +13,25 @@ var db *gorm.DB
 func init() {
 	config.Connect()
 	db = config.GetDB()
+}
+
+func prepareResponse(user *models.User, accounts []models.ResponseAccount) map[string]interface{} {
+	// setup response
+	responseUser := models.ResponseUser{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Accounts: accounts,
+	}
+	// prepare response
+	var token = prepareToken(user)
+	var response = map[string]interface{}{
+		"status":  http.StatusOK,
+		"message": "Successfully logged in",
+	}
+	response["jwt"] = token
+	response["data"] = responseUser
+	return response
 }
 
 func LoginService(username string, pass string) map[string]interface{} {
@@ -40,30 +56,6 @@ func LoginService(username string, pass string) map[string]interface{} {
 	accounts := []models.ResponseAccount{}
 	db.Table("accounts").Select("id, name, balance").Where("user_id=?", user.ID).Scan(&accounts)
 
-	// setup response
-	responseUser := models.ResponseUser{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Accounts: accounts,
-	}
-
-	// sign token
-	tokenContent := jwt.MapClaims{
-		"user_id": user.ID,
-		"expiry":  time.Now().Add(time.Minute * 60).Unix(),
-	}
-	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
-	token, err := jwtToken.SignedString([]byte("TokenPassword"))
-	utils.HandleErr(err)
-
-	// prepare response
-	var response = map[string]interface{}{
-		"status":  http.StatusOK,
-		"message": "Successfully logged in",
-	}
-	response["jwt"] = token
-	response["data"] = responseUser
-
+	var response = prepareResponse(user, accounts)
 	return response
 }
