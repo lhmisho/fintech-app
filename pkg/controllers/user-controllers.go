@@ -4,6 +4,7 @@ import (
 	"fintech-app/pkg/models"
 	"fintech-app/pkg/service"
 	"fintech-app/pkg/utils"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -29,11 +30,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		respAccount := models.ResponseAccount{ID: account.UserID, Name: account.Name, Balance: int(account.Balance)}
 		accounts = append(accounts, respAccount)
 
-		var response = service.PrepareResponse(user, accounts)
+		var response = service.PrepareResponse(user, accounts, true)
 		service.PrepareCreateResponse(response, w)
 
 	}else {
 		service.PrepareErrResponse(valid, w)
 	}
 
+}
+
+func GetUserController(w http.ResponseWriter, r *http.Request)  {
+	params := mux.Vars(r)
+	userId := params["id"]
+	auth := r.Header.Get("Authorization")
+	user := service.GetUser(userId, auth)
+	if user["Status"] == 200{
+		service.PrepareSuccessResponse(user, w)
+	}else {
+		service.PrepareErrResponse(user, w)
+	}
 }

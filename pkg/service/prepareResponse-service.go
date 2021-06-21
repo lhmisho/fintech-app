@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func PrepareResponse(user *models.User, accounts []models.ResponseAccount) map[string]interface{} {
+func PrepareResponse(user *models.User, accounts []models.ResponseAccount, withToken bool) map[string]interface{} {
 	// setup response
 	responseUser := models.ResponseUser{
 		ID:       user.ID,
@@ -15,12 +15,14 @@ func PrepareResponse(user *models.User, accounts []models.ResponseAccount) map[s
 		Accounts: accounts,
 	}
 	// prepare response
-	var token = prepareToken(user)
 	var response = map[string]interface{}{
 		"Status":  http.StatusOK,
 		"Message": "Successfully logged in",
 	}
-	response["jwt"] = token
+	if withToken{
+		var token = prepareToken(user)
+		response["jwt"] = token
+	}
 	response["data"] = responseUser
 	return response
 }

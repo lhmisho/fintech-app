@@ -48,7 +48,7 @@ func LoginService(username string, pass string) map[string]interface{} {
 		accounts := []models.ResponseAccount{}
 		db.Table("accounts").Select("id, name, balance").Where("user_id=?", user.ID).Scan(&accounts)
 
-		var response = PrepareResponse(user, accounts)
+		var response = PrepareResponse(user, accounts, true)
 		return response
 	}else{
 		return map[string]interface{}{

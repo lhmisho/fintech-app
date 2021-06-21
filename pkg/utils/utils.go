@@ -3,10 +3,13 @@ package utils
 import (
 	"encoding/json"
 	"fintech-app/pkg/interfaces"
+	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
 func ParseBody(r *http.Request, x interface{}) {
@@ -48,5 +51,22 @@ func Validation(values []interfaces.Validation) bool{
 			}
 		}
 	}
+	return true
+}
+
+func ValidateToken(id string, jwtToken string) bool {
+	cleanJWT := strings.Replace(jwtToken, "Bearer ","", -1)
+	tokenData := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(cleanJWT, tokenData, func(token *jwt.Token) (interface{}, error) {
+		return []byte("TokenPassword"), nil
+	})
+	HandleErr(err)
+	var userId, _ = strconv.ParseFloat(id, 8)
+	if token.Valid && tokenData["user_id"] == userId {
+		return true
+	}else {
+		return false
+	}
+	//if token.Valid && token["user_id"] == user
 	return true
 }
