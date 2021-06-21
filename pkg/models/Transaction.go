@@ -12,6 +12,13 @@ type Transaction struct {
 	Amount int
 }
 
+type ResponseTransaction struct {
+	ID uint
+	From uint
+	To uint
+	Amount int
+}
+
 func init(){
 	config.Connect()
 	db = config.GetDB()
@@ -21,4 +28,10 @@ func init(){
 func CreateTransaction(From uint, To uint, Amount int)  {
 	transaction := &Transaction{To: To, From: From, Amount: Amount}
 	db.Create(&transaction)
+}
+
+func GetTransactionByAccount(id uint) []ResponseTransaction {
+	transactions := []ResponseTransaction
+	db.Table("transactions").Select("id, transactions.from, transactions.to, amount").Where(Transaction{From: id}).Or(Transaction{To: id}).Scan(&transactions)
+	return transactions
 }
