@@ -67,6 +67,4 @@ func ValidateToken(id string, jwtToken string) bool {
 	}else {
 		return false
 	}
-	//if token.Valid && token["user_id"] == user
-	return true
 }
