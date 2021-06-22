@@ -31,7 +31,7 @@ func CreateTransaction(From uint, To uint, Amount int)  {
 }
 
 func GetTransactionByAccount(id uint) []ResponseTransaction {
-	transactions := []ResponseTransaction
+	transactions := []ResponseTransaction{}
 	db.Table("transactions").Select("id, transactions.from, transactions.to, amount").Where(Transaction{From: id}).Or(Transaction{To: id}).Scan(&transactions)
 	return transactions
 }
